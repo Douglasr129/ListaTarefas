@@ -5,11 +5,11 @@ using Business.Models.Validation;
 
 namespace Business.Services
 {
-    internal class TarefaService : BaseService, ITarefaService
+    public class TarefaService : BaseService, ITarefaService
     {
-        private readonly ITarefaRopository _tarefaRepository;
+        private readonly ITarefaRepository _tarefaRepository;
         public TarefaService(INotificador notificador, 
-                             ITarefaRopository tarefaRopository) : base(notificador)
+                             ITarefaRepository tarefaRopository) : base(notificador)
         {
             _tarefaRepository = tarefaRopository;
         }

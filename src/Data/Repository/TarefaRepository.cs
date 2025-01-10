@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repository
 {
-    public class TarefaRepository : Repository<Tarefa>, ITarefaRopository
+    public class TarefaRepository : Repository<Tarefa>, ITarefaRepository
     {
         public TarefaRepository(MeuDbContext db) : base(db)
         {

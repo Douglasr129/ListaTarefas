@@ -2,7 +2,7 @@
 
 namespace Business.Interfaces
 {
-    public interface ITarefaRopository : IRepository<Tarefa>
+    public interface ITarefaRepository : IRepository<Tarefa>
     {
         Task<Tarefa> ObterTarefaPorIdUsuario(Guid id);
         Task<Tarefa> ObterTarefaPorUsuario(Usuario usuario);
