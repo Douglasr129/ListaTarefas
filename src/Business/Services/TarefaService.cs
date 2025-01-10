@@ -7,41 +7,43 @@ namespace Business.Services
 {
     internal class TarefaService : BaseService, ITarefaService
     {
-        private readonly ITarefaRopository _tarefaRopository;
+        private readonly ITarefaRopository _tarefaRepository;
         public TarefaService(INotificador notificador, 
                              ITarefaRopository tarefaRopository) : base(notificador)
         {
-            _tarefaRopository = tarefaRopository;
+            _tarefaRepository = tarefaRopository;
         }
 
         public async Task Adicionar(Tarefa tarefa)
         {
             if (!ExecutarValidacao(new TarefaValidation(), tarefa)) return;
 
-            var tarefaExistente = await _tarefaRopository.ObterPorId(tarefa.Id);
+            var tarefaExistente = await _tarefaRepository.ObterPorId(tarefa.Id);
 
             if (tarefaExistente != null)
             {
-                Notificar("Já existe um produto com o ID informado!");
+                Notificar("Já existe uma tarefa com o ID informado!");
                 return;
             }
 
-            await _tarefaRopository.Adicionar(tarefa);
+            await _tarefaRepository.Adicionar(tarefa);
         }
 
-        public Task Atualizar(Tarefa tarefa)
+        public async Task Atualizar(Tarefa tarefa)
         {
-            throw new NotImplementedException();
+            if (!ExecutarValidacao(new TarefaValidation(), tarefa)) return;
+
+            await _tarefaRepository.Atualizar(tarefa);
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _tarefaRepository?.Dispose();
         }
 
-        public Task Remover(Guid id)
+        public async Task Remover(Guid id)
         {
-            throw new NotImplementedException();
+            await _tarefaRepository.Remover(id);
         }
     }
 }

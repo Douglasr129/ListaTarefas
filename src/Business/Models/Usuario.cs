@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Business.Models
 {
-    public class Usuario
+    public class Usuario : IdentityUser
     {
         public DateTime DataCriacao { get; set; } = DateTime.Now;
         public ICollection<Tarefa>? Tarefas { get; set; }
