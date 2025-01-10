@@ -18,7 +18,6 @@ namespace Api.Dtos
         public DateTime? DataConclusao { get; set; }
         public bool Concluida { get; set; }
 
-        public int UsuarioId { get; set; }
-        public Usuario? Usuario { get; set; }
+        public Guid UsuarioId { get; set; }
     }
 }

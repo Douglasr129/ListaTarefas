@@ -12,11 +12,11 @@ namespace Data.Repository
         {
         }
 
-        public async Task<Tarefa> ObterTarefaPorIdUsuario(Guid id)
+        public async Task<IEnumerable<Tarefa>> ObterTarefaPorIdUsuario(Guid id)
         {
             return await Db.tarefa.AsNoTracking()
-                .Include(f => f.UsuarioId)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .Where(t => t.Id == id)
+                .ToListAsync();
         }
 
         public Task<Tarefa> ObterTarefaPorUsuario(Usuario usuario)
