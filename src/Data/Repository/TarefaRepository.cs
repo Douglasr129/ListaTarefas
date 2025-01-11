@@ -15,7 +15,7 @@ namespace Data.Repository
         public async Task<IEnumerable<Tarefa>> ObterTarefaPorIdUsuario(Guid id)
         {
             return await Db.tarefa.AsNoTracking()
-                .Where(t => t.Id == id)
+                .Where(t => t.UsuarioId == id)
                 .ToListAsync();
         }
 

@@ -35,8 +35,14 @@ namespace Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<TarefaDto>> ObterTarefasId(Guid id)
         {
+            var userId = _user.GetUserId();
             var tarefa = await _tarefaRepository.ObterPorId(id);
-            if(tarefa is null) return NotFound();
+            if (tarefa == null) return NotFound();
+            if (tarefa.UsuarioId != userId)
+            {
+                NotificarErro("Só o usuário dessa tarefa pode visualizar");
+                return CustomResponse();
+            }
             
             return _mapper.Map<TarefaDto>(tarefa); ;
         }
@@ -58,6 +64,16 @@ namespace Api.Controllers
                 return CustomResponse();
             }
             if (!ModelState.IsValid) return CustomResponse(ModelState);
+            var userId = _user.GetUserId();
+            var tarefaexiste = await _tarefaRepository.ObterPorId(id);
+            if (tarefaexiste == null) return NotFound();
+            if (tarefaexiste.UsuarioId != userId)
+            {
+                NotificarErro("Só o usuário desta tarefa pode alterala");
+                return CustomResponse();
+            }
+
+            tarefaDto.UsuarioId = userId;
             await _tarefaService.Atualizar(_mapper.Map<Tarefa>(tarefaDto));
             return CustomResponse(HttpStatusCode.OK, tarefaDto);
         }
