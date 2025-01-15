@@ -37,7 +37,7 @@ namespace Api.Controllers
 
             var user = new IdentityUser
             {
-                UserName = registerUser.Email,
+                UserName = registerUser.UserName,
                 Email = registerUser.Email,
                 EmailConfirmed = true
             };
@@ -106,6 +106,7 @@ namespace Api.Controllers
                 UserToken = new UserTokenDto
                 {
                     Id = user.Id,
+                    UserName = user.UserName,
                     Email = user.Email,
                     Claims = claims.Select(c => new ClaimDto { Type = c.Type, Value = c.Value })
                 }

@@ -80,6 +80,14 @@ namespace Api.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Excluir(Guid id)
         {
+            var userId = _user.GetUserId();
+            var tarefa = await _tarefaRepository.ObterPorId(id);
+            if (tarefa == null) return NotFound();
+            if (tarefa.UsuarioId != userId)
+            {
+                NotificarErro("Só o usuário dessa tarefa pode excluila");
+                return CustomResponse();
+            }
             await _tarefaService.Remover(id);
             return CustomResponse(HttpStatusCode.NoContent);
         }
