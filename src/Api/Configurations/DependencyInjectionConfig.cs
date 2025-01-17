@@ -12,6 +12,9 @@ namespace Api.Configurations
     {
         public static IServiceCollection ResolveDependencies(this IServiceCollection services)
         {
+            // Extensions
+            services.AddScoped<RabbitMQProducer>();
+
             // Data
             services.AddScoped<MeuDbContext>();
             services.AddScoped<ITarefaRepository, TarefaRepository>();

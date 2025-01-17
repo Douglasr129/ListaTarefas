@@ -1,4 +1,5 @@
 ﻿using Api.Dtos;
+using Api.Extensions;
 using AutoMapper;
 using Business.Interfaces;
 using Business.Models;
@@ -14,16 +15,18 @@ namespace Api.Controllers
     [Authorize]
     public class TarefaController : MainController
     {
+        private readonly RabbitMQProducer _rabbitMQProducer;
         private readonly ITarefaRepository _tarefaRepository;
         private readonly ITarefaService _tarefaService;
         private readonly IMapper _mapper;
         private readonly IUser _user;
-        public TarefaController(INotificador notificador, IUser appUSer, ITarefaRepository tarefaRepository, ITarefaService tarefaService, IMapper mapper, IUser user) : base(notificador, appUSer)
+        public TarefaController(INotificador notificador, IUser appUSer, ITarefaRepository tarefaRepository, ITarefaService tarefaService, IMapper mapper, IUser user, RabbitMQProducer rabbitMQProducer) : base(notificador, appUSer)
         {
             _tarefaRepository = tarefaRepository;
             _tarefaService = tarefaService;
             _mapper = mapper;
             _user = user;
+            _rabbitMQProducer = rabbitMQProducer;
         }
         [HttpGet]
         public async Task<IEnumerable<TarefaDto>> ObterTarefas()
@@ -53,6 +56,7 @@ namespace Api.Controllers
 
             tarefaDto.UsuarioId = _user.GetUserId();
             await _tarefaService.Adicionar(_mapper.Map<Tarefa>(tarefaDto));
+            _rabbitMQProducer.SendMessage(tarefaDto);
             return CustomResponse(HttpStatusCode.OK, tarefaDto);
         }
         [HttpPut("{id:guid}")]
@@ -72,9 +76,20 @@ namespace Api.Controllers
                 NotificarErro("Só o usuário desta tarefa pode alterala");
                 return CustomResponse();
             }
-
+            if (tarefaexiste.Concluida != tarefaDto.Concluida)
+            {
+                if (tarefaDto.Concluida)
+                {
+                    tarefaDto.DataConclusao = System.DateTime.Now;
+                }
+                else
+                {
+                    tarefaDto.DataConclusao = null;
+                }
+            }
             tarefaDto.UsuarioId = userId;
             await _tarefaService.Atualizar(_mapper.Map<Tarefa>(tarefaDto));
+            _rabbitMQProducer.SendMessage(tarefaDto, tarefaexiste);
             return CustomResponse(HttpStatusCode.OK, tarefaDto);
         }
         [HttpDelete("{id:guid}")]
